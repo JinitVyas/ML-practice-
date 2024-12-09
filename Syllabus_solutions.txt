@@ -1,0 +1,526 @@
+Question 1: Read CSV, Handle Missing Values with Imputation
+python
+Copy code
+import pandas as pd
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import LabelEncoder
+
+# Example dataset
+data = {
+    'Country': ['India', 'Pakistan', 'Bhutan', 'Bangladesh', 'Nepal', 'Srilanka', 'Burma', 'China', 'Afghanistan'],
+    'Age': [49, 32, 35, 43, 45, 40, None, 53, 55],
+    'Salary': [62000, 38000, 44000, 51000, None, 48000, 42000, 69000, 73000],
+    'Purchased': ['No', 'Yes', 'No', 'No', 'Yes', 'Yes', 'No', 'Yes', 'No']
+}
+
+df = pd.DataFrame(data)
+
+# Label encoding before imputation
+columns_to_encode = ['Country', 'Purchased']
+label_encoders = {}
+for column in columns_to_encode:
+    le = LabelEncoder()
+    df[column] = le.fit_transform(df[column])
+    label_encoders[column] = le
+
+# Separate features and target
+X = df.iloc[:, :-1]  # Features
+y = df.iloc[:, -1]   # Target
+
+# Imputation for missing values
+imputer = SimpleImputer(strategy='mean')
+X.iloc[:, 1:] = imputer.fit_transform(X.iloc[:, 1:])
+
+
+
+
+
+
+
+
+
+
+
+Question 2: Implement Naive Bayes and Compute Accuracy
+python
+Copy code
+from sklearn.naive_bayes import GaussianNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train Naive Bayes model
+nb_model = GaussianNB()
+nb_model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = nb_model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
+
+
+
+
+
+
+
+
+
+
+
+Question 3: Implement k-Nearest Neighbors for Iris Dataset
+python
+Copy code
+from sklearn.datasets import load_iris
+from sklearn.neighbors import KNeighborsClassifier
+
+# Load iris dataset
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# Train KNN model
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X, y)
+
+# Predictions and accuracy
+y_pred = knn.predict(X)
+accuracy = accuracy_score(y, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
+
+
+
+
+
+
+
+
+
+
+Question 4: Implement Logistic Regression for Housing Prices
+python
+Copy code
+from sklearn.linear_model import LogisticRegression
+
+# Example dataset
+housing_data = {
+    'Size': [750, 800, 1200, 1500, 2000, 2500, 3000],
+    'Bedrooms': [2, 2, 3, 3, 4, 4, 5],
+    'Price': [300000, 320000, 450000, 500000, 600000, 750000, 1000000]
+}
+
+df_housing = pd.DataFrame(housing_data)
+X = df_housing[['Size', 'Bedrooms']]
+y = (df_housing['Price'] > 500000).astype(int)  # Binary classification: Affordable vs Expensive
+
+# Train Logistic Regression model
+log_reg = LogisticRegression()
+log_reg.fit(X, y)
+
+# Predict and evaluate
+y_pred = log_reg.predict(X)
+accuracy = accuracy_score(y, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
+
+
+
+
+
+
+
+
+
+Question 5: Compare SVM, KNN, Logistic Regression
+python
+Copy code
+from sklearn.svm import SVC
+
+# Example dataset
+mobile_data = {
+    'Price': [15000, 20000, 25000, 30000, 35000, 40000],
+    'RAM': [4, 6, 8, 8, 12, 16],
+    'Purchase': [0, 0, 1, 1, 1, 1]
+}
+
+df_mobile = pd.DataFrame(mobile_data)
+X = df_mobile[['Price', 'RAM']]
+y = df_mobile['Purchase']
+
+# Train and evaluate SVM
+svm = SVC()
+svm.fit(X, y)
+y_pred_svm = svm.predict(X)
+
+# Train and evaluate KNN
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X, y)
+y_pred_knn = knn.predict(X)
+
+# Train and evaluate Logistic Regression
+log_reg = LogisticRegression()
+log_reg.fit(X, y)
+y_pred_log = log_reg.predict(X)
+
+# Accuracy
+print(f"SVM Accuracy: {accuracy_score(y, y_pred_svm):.2f}")
+print(f"KNN Accuracy: {accuracy_score(y, y_pred_knn):.2f}")
+print(f"Logistic Regression Accuracy: {accuracy_score(y, y_pred_log):.2f}")
+
+
+
+
+
+
+
+
+
+
+Question 6: Predict T-Shirt Size using k-NN
+python
+Copy code
+# Dataset
+tshirt_data = {
+    'Height': [158, 158, 158, 160, 160, 163, 163, 160, 163, 165, 165, 165, 168, 168, 168, 170, 170, 170],
+    'Weight': [58, 59, 63, 59, 60, 60, 61, 64, 64, 61, 62, 65, 62, 63, 66, 63, 64, 68],
+    'Size': ['M', 'M', 'M', 'M', 'M', 'M', 'M', 'L', 'L', 'L', 'L', 'L', 'L', 'L', 'L', 'L', 'L', 'L']
+}
+
+df_tshirt = pd.DataFrame(tshirt_data)
+
+# Encode Size
+le_size = LabelEncoder()
+df_tshirt['Size'] = le_size.fit_transform(df_tshirt['Size'])
+
+X = df_tshirt[['Height', 'Weight']]
+y = df_tshirt['Size']
+
+# Train k-NN model
+knn = KNeighborsClassifier(n_neighbors=2)
+knn.fit(X, y)
+
+# Predict for a new customer
+new_customer = [[165, 63]]
+predicted_size = le_size.inverse_transform(knn.predict(new_customer))
+print(f"Predicted T-Shirt Size: {predicted_size[0]}")
+
+
+
+
+
+
+
+
+
+Question 7: Implement Naive Bayes for Weather Dataset
+python
+Copy code
+weather_data = {
+    'Outlook': ['Sunny', 'Sunny', 'Overcast', 'Rain', 'Rain', 'Overcast', 'Sunny', 'Sunny', 'Overcast', 'Rain'],
+    'Temperature': ['Hot', 'Hot', 'Hot', 'Mild', 'Mild', 'Hot', 'Hot', 'Hot', 'Hot', 'Mild'],
+    'Humidity': ['High', 'High', 'High', 'High', 'Low', 'High', 'Low', 'High', 'High', 'High'],
+    'Wind': ['Weak', 'Strong', 'Weak', 'Weak', 'Strong', 'Strong', 'Weak', 'Weak', 'Strong', 'Strong'],
+    'PlayTennis': ['No', 'No', 'Yes', 'Yes', 'No', 'No', 'Yes', 'Yes', 'Yes', 'No']
+}
+
+df_weather = pd.DataFrame(weather_data)
+
+# Encode features and target
+columns_to_encode = ['Outlook', 'Temperature', 'Humidity', 'Wind', 'PlayTennis']
+label_encoders = {}
+for column in columns_to_encode:
+    le = LabelEncoder()
+    df_weather[column] = le.fit_transform(df_weather[column])
+    label_encoders[column] = le
+
+X = df_weather.iloc[:, :-1]
+y = df_weather.iloc[:, -1]
+
+# Train Naive Bayes model
+nb_model = GaussianNB()
+nb_model.fit(X, y)
+
+# Predict for new data
+new_weather = [[1, 2, 0, 1]]  # Example encoded data
+predicted_play = label_encoders['PlayTennis'].inverse_transform(nb_model.predict(new_weather))
+print(f"Prediction: {predicted_play[0]}")
+Let me know if you’d like to continue or refine any specific part!
+
+
+
+
+
+
+You said:
+give rest of the answers in the same manner as above
+ChatGPT said:
+ChatGPT
+Here are the remaining answers presented in the same format, with each step integrated into cohesive questions and codes:
+
+
+
+
+
+
+
+
+
+
+
+Question 8: Label Encode and Access Columns Using iloc with Indexes
+python
+Copy code
+# Example Dataset
+data = {
+    'City': ['Delhi', 'Mumbai', 'Kolkata', 'Chennai'],
+    'Population': [19800000, 20400000, 14800000, 10000000],
+    'Coastal': ['No', 'Yes', 'No', 'Yes']
+}
+
+df = pd.DataFrame(data)
+
+# Encode specific columns using indexes
+columns_to_encode = [0, 2]  # 'City' and 'Coastal'
+label_encoders = {}
+
+for idx in columns_to_encode:
+    le = LabelEncoder()
+    df.iloc[:, idx] = le.fit_transform(df.iloc[:, idx])
+    label_encoders[idx] = le
+
+
+
+
+
+
+
+
+
+
+Question 9: Use Static List of Columns in a for Loop Instead of df.columns
+python
+Copy code
+# Define a static list of columns to label encode
+columns_to_encode = ['City', 'Coastal']
+
+for column in columns_to_encode:
+    le = LabelEncoder()
+    df[column] = le.fit_transform(df[column])
+Combined Code for Previous Steps
+Here’s a consolidated script incorporating all steps discussed so far into a single block:
+
+python
+Copy code
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+
+# Example Dataset
+data = {
+    'Country': ['India', 'Pakistan', 'Bhutan', 'Bangladesh', 'Nepal', 'Srilanka', 'Burma', 'China', 'Afghanistan'],
+    'Age': [49, 32, 35, 43, 45, 40, None, 53, 55],
+    'Salary': [62000, 38000, 44000, 51000, None, 48000, 42000, 69000, 73000],
+    'Purchased': ['No', 'Yes', 'No', 'No', 'Yes', 'Yes', 'No', 'Yes', 'No']
+}
+
+df = pd.DataFrame(data)
+
+# Label Encoding for 'Country' and 'Purchased'
+columns_to_encode = ['Country', 'Purchased']
+label_encoders = {}
+for column in columns_to_encode:
+    le = LabelEncoder()
+    df[column] = le.fit_transform(df[column])
+    label_encoders[column] = le
+
+# Imputation for Missing Values
+X = df.iloc[:, :-1]  # Features
+y = df.iloc[:, -1]   # Target
+imputer = SimpleImputer(strategy='mean')
+X.iloc[:, 1:] = imputer.fit_transform(X.iloc[:, 1:])
+
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train and Evaluate Naive Bayes Model
+nb_model = GaussianNB()
+nb_model.fit(X_train, y_train)
+y_pred = nb_model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+
+print(f"Naive Bayes Model Accuracy: {accuracy:.2f}")
+
+# Static List Encoding Example
+static_columns = ['Country']
+for column in static_columns:
+    le = LabelEncoder()
+    df[column] = le.fit_transform(df[column])
+Let me know if you'd like any further clarification or additional examples!
+
+
+
+
+
+
+You said:
+go for futher questions also
+ChatGPT said:
+ChatGPT
+Here are the answers for the subsequent questions, formatted as requested:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Question 10: Implement Random Forest and Decision Tree on Pima Indians Diabetes Dataset and Represent Accuracy
+python
+Copy code
+# Pima Indians Diabetes Dataset
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+
+# Example dataset
+data = {
+    'Pregnancies': [6, 1, 8, 1, 0, 5, 3, 10, 2, 8, 4, 10, 10, 1, 5, 7, 0, 7, 1, 1],
+    'Glucose': [148, 85, 183, 89, 137, 116, 78, 115, 197, 125, 110, 168, 139, 189, 166, 100, 118, 107, 103, 115],
+    'Outcome': [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1]
+}
+
+df = pd.DataFrame(data)
+
+# Split dataset
+X = df.iloc[:, :-1]
+y = df.iloc[:, -1]
+
+# Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Decision Tree Classifier
+dt_model = DecisionTreeClassifier(random_state=42)
+dt_model.fit(X_train, y_train)
+dt_pred = dt_model.predict(X_test)
+dt_accuracy = accuracy_score(y_test, dt_pred)
+
+# Random Forest Classifier
+rf_model = RandomForestClassifier(random_state=42)
+rf_model.fit(X_train, y_train)
+rf_pred = rf_model.predict(X_test)
+rf_accuracy = accuracy_score(y_test, rf_pred)
+
+print(f"Decision Tree Accuracy: {dt_accuracy:.2f}")
+print(f"Random Forest Accuracy: {rf_accuracy:.2f}")
+
+
+
+
+
+
+
+
+
+
+
+Question 11: Import Libraries, Check Missing Values, Categorical Values, Split Data, and Feature Scaling
+python
+Copy code
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.model_selection import train_test_split
+
+# Dataset
+data = {
+    'Country': ['France', 'Span', 'German', 'German', 'France', 'Span', 'German', 'Span', 'France', 'Span'],
+    'Age': [44, 44, 54, 34, 44, 34, 23, 45, 23, 23],
+    'Salary': [44000, 50000, 23000, None, None, 23667, 67000, 45000, 56000, 66000],
+    'Purchased': ['Yes', 'No', 'Yes', 'Yes', 'No', 'Yes', 'Yes', 'No', 'No', 'No']
+}
+
+df = pd.DataFrame(data)
+
+# Label Encoding for Categorical Data
+label_encoders = {}
+columns_to_encode = ['Country', 'Purchased']
+for column in columns_to_encode:
+    le = LabelEncoder()
+    df[column] = le.fit_transform(df[column])
+    label_encoders[column] = le
+
+# Check for Missing Values
+missing_values = df.isnull().sum()
+print(f"Missing Values:\n{missing_values}")
+
+# Impute Missing Values
+from sklearn.impute import SimpleImputer
+imputer = SimpleImputer(strategy='mean')
+df['Salary'] = imputer.fit_transform(df[['Salary']])
+
+# Split Dataset into Features and Target
+X = df.iloc[:, :-1]
+y = df.iloc[:, -1]
+
+# Split Data into Train and Test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Feature Scaling
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+print("Feature scaling completed.")
+
+
+
+
+Question 12: Perform Evaluation Metrics for All Algorithms
+python
+Copy code
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, roc_auc_score, f1_score
+import numpy as np
+
+# Example Data: Random predictions (replace with actual predictions)
+y_true = [1, 0, 1, 1, 0, 1, 0, 1, 0, 1]
+y_pred = [1, 0, 1, 0, 0, 1, 1, 1, 0, 0]
+
+# Confusion Matrix
+cm = confusion_matrix(y_true, y_pred)
+print("Confusion Matrix:")
+print(cm)
+
+# Precision
+precision = precision_score(y_true, y_pred)
+print(f"Precision: {precision:.2f}")
+
+# Recall
+recall = recall_score(y_true, y_pred)
+print(f"Recall: {recall:.2f}")
+
+# ROC-AUC
+roc_auc = roc_auc_score(y_true, y_pred)
+print(f"ROC-AUC: {roc_auc:.2f}")
+
+# Specificity (True Negative Rate)
+specificity = cm[0, 0] / (cm[0, 0] + cm[0, 1])
+print(f"Specificity: {specificity:.2f}")
+
+# Sensitivity (Recall)
+sensitivity = recall
+print(f"Sensitivity: {sensitivity:.2f}")
+
+# Mean Absolute Percentage Error (MAPE)
+mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+print(f"Mean Absolute Percentage Error (MAPE): {mape:.2f}%")
